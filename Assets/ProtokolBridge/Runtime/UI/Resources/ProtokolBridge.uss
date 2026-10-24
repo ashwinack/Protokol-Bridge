@@ -1,0 +1,492 @@
+/* Protokol Bridge - runtime tool UI.
+   Dark, dense and high-contrast: this is an operator panel that gets read at a
+   glance while hardware is being wired up, not a consumer screen. */
+
+:root {
+    --bg: rgb(24, 25, 28);
+    --panel: rgb(35, 37, 41);
+    --panel-alt: rgb(43, 45, 50);
+    --line: rgb(58, 61, 68);
+    --text: rgb(227, 229, 232);
+    --muted: rgb(148, 155, 164);
+    --accent: rgb(74, 158, 255);
+    --ok: rgb(59, 165, 93);
+    --warn: rgb(250, 168, 26);
+    --bad: rgb(237, 66, 69);
+}
+
+.root {
+    flex-grow: 1;
+    background-color: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+}
+
+/* ---------- Toolbar ---------- */
+
+.toolbar {
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--panel);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--line);
+    padding: 8px 12px;
+}
+
+.toolbar__title {
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-right: 20px;
+    color: var(--text);
+}
+
+.toolbar__spacer {
+    flex-grow: 1;
+}
+
+.toolbar__stat {
+    color: var(--muted);
+    margin-left: 16px;
+    font-size: 12px;
+}
+
+/* ---------- Tabs ---------- */
+
+.tabs {
+    flex-direction: row;
+    background-color: var(--panel);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--line);
+    padding-left: 8px;
+}
+
+.tab {
+    padding: 8px 18px;
+    background-color: transparent;
+    border-width: 0;
+    border-bottom-width: 2px;
+    border-bottom-color: transparent;
+    color: var(--muted);
+    margin: 0;
+}
+
+.tab:hover {
+    color: var(--text);
+}
+
+.tab--active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    -unity-font-style: bold;
+}
+
+/* ---------- Layout ---------- */
+
+.content {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+.pane-left {
+    width: 300px;
+    min-width: 300px;
+    background-color: var(--panel);
+    border-right-width: 1px;
+    border-right-color: var(--line);
+}
+
+.pane-right {
+    flex-grow: 1;
+    padding: 14px 18px;
+}
+
+.pane-header {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--line);
+}
+
+.pane-header__label {
+    -unity-font-style: bold;
+    flex-grow: 1;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* ---------- List rows ---------- */
+
+.row {
+    flex-direction: row;
+    align-items: center;
+    padding: 9px 12px;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--line);
+    background-color: transparent;
+}
+
+.row:hover {
+    background-color: var(--panel-alt);
+}
+
+.row--selected {
+    background-color: var(--panel-alt);
+    border-left-width: 3px;
+    border-left-color: var(--accent);
+    padding-left: 9px;
+}
+
+.row__body {
+    flex-grow: 1;
+}
+
+.row__title {
+    color: var(--text);
+}
+
+.row__sub {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 5px;
+    margin-right: 10px;
+    background-color: var(--muted);
+}
+
+.dot--running { background-color: var(--ok); }
+.dot--connecting { background-color: var(--warn); }
+.dot--faulted { background-color: var(--bad); }
+.dot--stopped { background-color: rgb(90, 95, 103); }
+
+/* ---------- Buttons ---------- */
+
+.btn {
+    background-color: var(--panel-alt);
+    color: var(--text);
+    border-width: 1px;
+    border-color: var(--line);
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin: 0 4px 0 0;
+}
+
+.btn:hover {
+    background-color: rgb(55, 58, 64);
+}
+
+.btn--primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: rgb(12, 14, 18);
+    -unity-font-style: bold;
+}
+
+.btn--danger {
+    border-color: var(--bad);
+    color: var(--bad);
+}
+
+.btn--small {
+    padding: 3px 8px;
+    font-size: 11px;
+}
+
+.btn--add {
+    flex-grow: 1;
+    margin: 6px 4px;
+}
+
+/* ---------- Forms ---------- */
+
+.section {
+    background-color: var(--panel);
+    border-width: 1px;
+    border-color: var(--line);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.section__title {
+    -unity-font-style: bold;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.field {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 7px;
+}
+
+.field > .unity-base-field__label,
+.field__label {
+    min-width: 140px;
+    width: 140px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.field > .unity-base-field__input {
+    flex-grow: 1;
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 6px;
+    white-space: normal;
+}
+
+.empty {
+    color: var(--muted);
+    padding: 24px;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}
+
+.error-text {
+    color: var(--bad);
+    font-size: 11px;
+    margin-top: 6px;
+    white-space: normal;
+}
+
+/* ---------- Output blocks ----------
+   A rule can send several messages. Each gets its own bordered block so it is
+   obvious where one output's settings end and the next begins. */
+
+.output-block {
+    background-color: var(--panel-alt);
+    border-width: 1px;
+    border-color: var(--line);
+    border-left-width: 3px;
+    border-left-color: var(--accent);
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+
+.output-block__title {
+    -unity-font-style: bold;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* ---------- Argument rows ---------- */
+
+.arg-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.arg-row__index {
+    width: 42px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* ---------- Traffic log ---------- */
+
+.log-list {
+    flex-grow: 1;
+    background-color: rgb(18, 19, 22);
+    border-width: 1px;
+    border-color: var(--line);
+    border-radius: 6px;
+}
+
+/* Row height, column height and ListView.fixedItemHeight have to agree.
+   `overflow: hidden` is needed so a long message truncates instead of shoving
+   the RULE column off the edge, but it clips vertically as well as
+   horizontally. Without an explicit height that covers the text, it slices the
+   tops and bottoms off the glyphs. Each column therefore gets a fixed height
+   and is centred inside it. */
+
+.log-row {
+    flex-direction: row;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+.log-row__time,
+.log-row__dir,
+.log-row__endpoint,
+.log-row__summary,
+.log-row__rule {
+    height: 20px;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+}
+
+.log-row__time {
+    width: 86px;
+    color: var(--muted);
+}
+
+.log-row__dir {
+    width: 34px;
+    -unity-font-style: bold;
+}
+
+.log-row__dir--in { color: var(--accent); }
+.log-row__dir--out { color: var(--ok); }
+
+.log-row__endpoint {
+    width: 130px;
+    color: var(--muted);
+}
+
+.log-row__summary {
+    flex-grow: 1;
+    flex-shrink: 1;
+    color: var(--text);
+}
+
+.log-row__rule {
+    width: 120px;
+    color: var(--warn);
+    font-size: 11px;
+}
+
+/* ---------- Built-in controls ----------
+   Unity's default runtime theme draws inputs on a near-white background. The
+   panel's light body text then inherited straight into them, so every field
+   rendered light-on-white and was unreadable. These rules force the built-in
+   controls dark to match the rest of the panel. Literal colours are used rather
+   than var() so the theme can never win by load order. */
+
+.unity-base-field__label {
+    color: rgb(148, 155, 164);
+}
+
+/* Text inputs */
+
+.unity-base-text-field__input {
+    background-color: rgb(28, 30, 34);
+    border-width: 1px;
+    border-color: rgb(58, 61, 68);
+    border-radius: 4px;
+    padding: 4px 8px;
+    color: rgb(227, 229, 232);
+}
+
+.unity-base-text-field__input .unity-text-element {
+    color: rgb(227, 229, 232);
+}
+
+.unity-base-text-field__input:focus {
+    border-color: rgb(74, 158, 255);
+}
+
+.unity-base-text-field__input:hover {
+    border-color: rgb(80, 85, 94);
+}
+
+/* Dropdowns */
+
+.unity-base-popup-field__input {
+    background-color: rgb(43, 45, 50);
+    border-width: 1px;
+    border-color: rgb(58, 61, 68);
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.unity-base-popup-field__input:hover {
+    background-color: rgb(55, 58, 64);
+}
+
+.unity-base-popup-field__text {
+    color: rgb(227, 229, 232);
+}
+
+.unity-base-popup-field__arrow {
+    -unity-background-image-tint-color: rgb(190, 196, 204);
+}
+
+/* The list that opens when a dropdown is clicked */
+
+.unity-base-dropdown__container-outer,
+.unity-base-dropdown__container-inner {
+    background-color: rgb(35, 37, 41);
+    border-width: 1px;
+    border-color: rgb(58, 61, 68);
+}
+
+.unity-base-dropdown__item {
+    background-color: rgb(35, 37, 41);
+    padding: 5px 10px;
+}
+
+.unity-base-dropdown__item:hover {
+    background-color: rgb(55, 58, 64);
+}
+
+.unity-base-dropdown__label,
+.unity-base-dropdown__item .unity-text-element {
+    color: rgb(227, 229, 232);
+}
+
+/* Toggles */
+
+.unity-toggle__checkmark {
+    background-color: rgb(28, 30, 34);
+    border-width: 1px;
+    border-color: rgb(58, 61, 68);
+    border-radius: 3px;
+    -unity-background-image-tint-color: rgb(74, 158, 255);
+}
+
+.unity-toggle__input:hover .unity-toggle__checkmark {
+    border-color: rgb(80, 85, 94);
+}
+
+/* Scrollbars */
+
+.unity-scroller,
+.unity-scroller--vertical,
+.unity-scroller--horizontal {
+    background-color: rgb(28, 30, 34);
+    border-width: 0;
+}
+
+.unity-base-slider__tracker {
+    background-color: rgb(28, 30, 34);
+    border-width: 0;
+}
+
+.unity-base-slider__dragger {
+    background-color: rgb(70, 74, 82);
+    border-width: 0;
+    border-radius: 4px;
+}
+
+.unity-base-slider__dragger:hover {
+    background-color: rgb(92, 97, 106);
+}
+
+.unity-scroller__low-button,
+.unity-scroller__high-button {
+    background-color: rgb(35, 37, 41);
+    border-width: 0;
+}
+
+.unity-scroll-view__content-viewport {
+    background-color: transparent;
+}

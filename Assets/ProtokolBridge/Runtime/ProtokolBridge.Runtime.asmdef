@@ -1,0 +1,14 @@
+{
+    "name": "ProtokolBridge.Runtime",
+    "rootNamespace": "ProtokolBridge",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
