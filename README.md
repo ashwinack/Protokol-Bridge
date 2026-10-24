@@ -8,6 +8,8 @@ with its own delay.
 Built with Unity 6 (6000.6.0f1). The operator configures everything from the app's
 own UI; nothing needs the Unity Editor.
 
+![Connections tab](docs/screenshots/connections.png)
+
 ## What it does
 
 - **Serial** — COM port, configurable baud/parity/data bits/stop bits, line framing
@@ -47,11 +49,22 @@ The rule editor previews what each output will send before any hardware is conne
 
 ## Interface
 
-Three tabs:
+Three tabs.
 
-- **Connections** — add and configure endpoints, start/stop them, send test messages
-- **Rules** — the when/then editor, with live preview
-- **Traffic** — live log of everything crossing the bridge, with filtering
+**Connections** — add and configure endpoints, start and stop them, and send test
+messages without needing the far end set up yet. Each connection shows its live state
+and the real error from the OS if it fails to open.
+
+**Rules** — the when/then editor. One condition, any number of outputs, each with its
+own target, payload and delay. The screenshot below shows a single serial line fanning
+out to OSC, a WATCHOUT cue over TCP, and a UDP lighting desk:
+
+![Rules tab](docs/screenshots/rules.png)
+
+**Traffic** — live log of everything crossing the bridge, with filtering, pause, and
+which rule produced each outgoing message:
+
+![Traffic tab](docs/screenshots/traffic.png)
 
 ## Building from source
 
