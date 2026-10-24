@@ -133,6 +133,42 @@ first" warning are therefore held as fields on `EndpointsPanel` and updated in p
 `RefreshEditorStatus()`. Anything new that displays live connection state belongs there, not
 in `BuildEditor`.
 
+## Performance
+
+Measured on this project, not assumed. Re-measure before changing any of it.
+
+**Idle render cost was the dominant waste.** This is a tool whose panel changes about four
+times a second, but it rendered continuously: measured **834 FPS while completely idle**
+with zero messages. `BridgeManager.ApplyFrameRate()` now caps it via
+`Config.targetFrameRate` (default 60), giving **59.4 FPS idle** — 14x fewer frames. Two
+things matter here: `vSyncCount` **must** be 0 or Unity ignores `targetFrameRate`
+entirely, and the frame rate sets the resolution of rule delays, because `FlushDelayed()`
+runs in `Update()`. Below ~30 FPS short delays get coarse. Receive speed is unaffected —
+transports run on their own threads.
+
+**Line framing was quadratic.** `StreamFramer.Append` and the old
+`SerialTransport.ExtractLines` both called `buffer.ToString()` *inside* the extraction
+loop plus `Remove(0, n)` per line, so a chunk holding k lines cost O(k*n). Measured: 16x
+the lines cost **122x** the time (0.0052 ms -> 0.6362 ms going from 20 to 320 lines), and
+11.8x the allocation. Both now scan the StringBuilder by index and compact once per chunk.
+`SerialTransport` was changed to use the shared `StreamFramer` so there is one
+implementation rather than two copies of the same bug. Verified over a real TCP connection
+including the partial-line-across-writes case.
+
+**Per-message GC is fine — do not "optimize" it.** Measured 5 gen0 collections per 200,000
+routed messages, and 0 per 200,000 `Describe()` or `Split`+`Trim` calls. At 1000 msg/s
+that is one cheap gen0 roughly every 40 seconds. Pooling `BridgeMessage`, de-boxing OSC
+arguments, or reusing the UDP receive buffer would all add real risk — `BridgeMessage.Raw`
+aliases the receive array, so a reused buffer would corrupt in-flight messages — for
+savings the measurements do not justify.
+
+**UI callbacks must not rebuild the panel.** `UiFactory.IntRow` is a `TextField` with
+`RegisterValueChangedCallback`, which fires on *every keystroke*. The Delay field used to
+call `BuildEditor()` from that callback, which cleared and rebuilt the panel and destroyed
+the field being typed into — only one digit could ever be entered. Hints are now updated
+in place. Never call `BuildEditor()` / `Rebuild()` from a text field's value-changed
+callback; dropdowns, toggles and buttons are fine because they commit discretely.
+
 ## Testing without hardware
 
 `Unity_RunCommand` exercises the whole stack — construct transports directly, bind two OSC

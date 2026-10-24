@@ -89,8 +89,21 @@ namespace ProtokolBridge
             Config = loaded;
             Log = new TrafficLog(Config.logCapacity);
 
+            ApplyFrameRate();
+
             _engine.TargetKindLookup = LookupTargetKind;
             _engine.SetRules(Config.rules);
+        }
+
+        /// <summary>
+        /// Caps the render rate. vSync has to be switched off first: while
+        /// vSyncCount is non-zero Unity ignores targetFrameRate entirely and the
+        /// app keeps rendering at the monitor's refresh rate.
+        /// </summary>
+        public void ApplyFrameRate()
+        {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = Config.targetFrameRate > 0 ? Config.targetFrameRate : -1;
         }
 
         private void Start()

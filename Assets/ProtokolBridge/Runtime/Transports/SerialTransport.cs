@@ -15,7 +15,8 @@ namespace ProtokolBridge
     {
         private readonly EndpointConfig _config;
         private readonly string _terminator;
-        private readonly StringBuilder _lineBuffer = new StringBuilder(256);
+        private readonly StreamFramer _framer;
+        private readonly List<string> _lines = new List<string>(8);
         private readonly byte[] _readBuffer = new byte[4096];
         private SerialPort _port;
 
@@ -24,6 +25,9 @@ namespace ProtokolBridge
             _config = config;
             _terminator = config.ResolvedTerminator();
             if (string.IsNullOrEmpty(_terminator)) _terminator = "\n";
+
+            // Shared with the TCP transports so line framing has one implementation.
+            _framer = new StreamFramer(_terminator);
         }
 
         public override TransportKind Kind { get { return TransportKind.Serial; } }
@@ -50,7 +54,7 @@ namespace ProtokolBridge
             };
 
             _port.Open();
-            _lineBuffer.Length = 0;
+            _framer.Reset();
         }
 
         protected override void PumpOnce()
@@ -82,28 +86,9 @@ namespace ProtokolBridge
                 return;
             }
 
-            _lineBuffer.Append(Encoding.UTF8.GetString(_readBuffer, 0, count));
-            ExtractLines();
-        }
-
-        private void ExtractLines()
-        {
-            while (true)
-            {
-                var text = _lineBuffer.ToString();
-                var index = text.IndexOf(_terminator, StringComparison.Ordinal);
-                if (index < 0)
-                {
-                    // Guard against a device that never sends a terminator.
-                    if (_lineBuffer.Length > 65536) _lineBuffer.Length = 0;
-                    return;
-                }
-
-                var line = text.Substring(0, index).Trim('\r', '\n', ' ');
-                _lineBuffer.Remove(0, index + _terminator.Length);
-
-                if (line.Length > 0) Publish(BridgeMessage.FromText(Id, line, _config.portName));
-            }
+            _lines.Clear();
+            _framer.Append(_readBuffer, count, _lines);
+            foreach (var line in _lines) Publish(BridgeMessage.FromText(Id, line, _config.portName));
         }
 
         protected override void WriteMessage(BridgeMessage message)

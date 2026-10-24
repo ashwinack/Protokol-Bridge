@@ -326,16 +326,18 @@ namespace ProtokolBridge.UI
                 BuildList();
             }));
 
+            // The hint is updated in place. Calling BuildEditor() here would clear and
+            // rebuild the panel on every keystroke, destroying the very field being
+            // typed into — you could only ever enter one digit.
+            var delayHint = UiFactory.Text(DelayHint(ruleOutput.delayMs), "hint");
+
             block.Add(UiFactory.IntRow("Delay (ms)", ruleOutput.delayMs, v =>
             {
                 ruleOutput.delayMs = v;
-                BuildEditor();
+                delayHint.text = DelayHint(v);
+                RefreshPreview();
             }, 0, 600000));
-            block.Add(UiFactory.Text(
-                ruleOutput.delayMs > 0
-                    ? "Waits " + ruleOutput.delayMs + " ms after the message arrives, then sends."
-                    : "Sends immediately.",
-                "hint"));
+            block.Add(delayHint);
 
             block.Add(UiFactory.EnumRow("Payload", ruleOutput.outputMode, (OutputMode v) =>
             {
@@ -369,6 +371,13 @@ namespace ProtokolBridge.UI
             }
 
             parent.Add(block);
+        }
+
+        private static string DelayHint(int delayMs)
+        {
+            return delayMs > 0
+                ? "Waits " + delayMs + " ms after the message arrives, then sends."
+                : "Sends immediately.";
         }
 
         private void BuildArgEditor(RuleOutput ruleOutput, VisualElement parent)

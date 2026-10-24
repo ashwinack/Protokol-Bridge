@@ -12,6 +12,19 @@ namespace ProtokolBridge
         public List<RouteRule> rules = new List<RouteRule>();
         public int logCapacity = 500;
 
+        /// <summary>
+        /// Frames per second the app renders at. This is a bridge, not a game: the
+        /// panel changes about four times a second, so rendering at the monitor's
+        /// refresh rate burns a core and a GPU for nothing on a machine that runs
+        /// for weeks.
+        ///
+        /// It does NOT affect how fast messages are received — transports run on
+        /// their own threads. It does set the resolution of rule delays, which are
+        /// flushed once per frame, so going below ~30 makes short delays coarse.
+        /// 0 means uncapped.
+        /// </summary>
+        public int targetFrameRate = 60;
+
         /// <summary>A small, self-explanatory starting point for a first run.</summary>
         public static BridgeConfig CreateDefault()
         {
